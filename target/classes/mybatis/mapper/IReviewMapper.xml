@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+    PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+    "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.future.my.review.mapper.IReviewMapper">
+
+      <!-- 리뷰 작성 -->
+<insert id="insertReview" parameterType="com.future.my.review.vo.ReviewVO" useGeneratedKeys="true" keyProperty="reviewId">
+    INSERT INTO REVIEWS (PLACE_API_ID, MEM_ID, CONTENT, LIKES, DISLIKES)
+    VALUES (#{placeApiId}, #{memId}, #{content}, #{likes}, #{dislikes})
+</insert>
+
+
+
+    <!-- 리뷰 목록 -->
+    <select id="getReviewsByPlaceId" resultType="com.future.my.review.vo.ReviewVO">
+        SELECT review_id AS reviewId,
+               place_api_id AS placeApiId,
+               mem_id AS memId,
+               content,
+               likes,
+               dislikes,
+               create_dt AS createDt,
+               update_dt AS updateDt
+        FROM reviews
+        WHERE place_api_id = #{placeApiId}
+        ORDER BY create_dt DESC
+    </select>
+
+    <!-- 리뷰 수정 -->
+    <update id="updateReview" parameterType="com.future.my.review.vo.ReviewVO">
+        UPDATE reviews
+        SET content = #{content},
+            update_dt = SYSDATE
+        WHERE review_id = #{reviewId}
+          AND mem_id = #{memId}
+    </update>
+
+    <!-- 리뷰 삭제 -->
+    <delete id="deleteReview" parameterType="long">
+        DELETE FROM reviews
+        WHERE review_id = #{reviewId}
+    </delete>
+
+    <!-- 좋아요/싫어요 -->
+    <update id="updateLikeDislike" parameterType="map">
+        <choose>
+            <when test="type == 'like'">
+                UPDATE reviews SET likes = NVL(likes,0) + 1 WHERE review_id = #{reviewId}
+            </when>
+            <when test="type == 'dislike'">
+                UPDATE reviews SET dislikes = NVL(dislikes,0) + 1 WHERE review_id = #{reviewId}
+            </when>
+        </choose>
+    </update>
+
+    <!-- 좋아요 수 조회 -->
+    <select id="getLikes" parameterType="long" resultType="int">
+        SELECT NVL(likes,0) FROM reviews WHERE review_id = #{reviewId}
+    </select>
+
+    <!-- 싫어요 수 조회 -->
+    <select id="getDislikes" parameterType="long" resultType="int">
+        SELECT NVL(dislikes,0) FROM reviews WHERE review_id = #{reviewId}
+    </select>
+
+</mapper>

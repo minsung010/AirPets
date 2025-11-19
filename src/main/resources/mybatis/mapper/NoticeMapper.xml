@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+    PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+    "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.future.my.member.dao.INoticeDAO">
+
+    <insert id="insertNotice" parameterType="com.future.my.member.vo.NoticeVO">
+    INSERT INTO NOTICE (ID, TITLE, CONTENT, REG_DATE, WRITER)
+    VALUES (NOTICE_SEQ.NEXTVAL, #{title}, #{content}, SYSDATE, #{writer})
+</insert>
+
+<select id="getAllNotices" resultType="com.future.my.member.vo.NoticeVO">
+    SELECT ID, TITLE, CONTENT, REG_DATE, WRITER FROM NOTICE ORDER BY REG_DATE DESC
+</select>
+
+<select id="getNotice" parameterType="int" resultType="com.future.my.member.vo.NoticeVO">
+    SELECT ID, TITLE, CONTENT, REG_DATE, WRITER FROM NOTICE WHERE ID = #{id}
+</select>
+
+
+    <update id="updateNotice" parameterType="com.future.my.member.vo.NoticeVO">
+        UPDATE NOTICE
+        SET TITLE = #{title},
+            CONTENT = #{content}
+        WHERE ID = #{id}
+    </update>
+
+    <delete id="deleteNotice" parameterType="int">
+        DELETE FROM NOTICE WHERE ID = #{id}
+    </delete>
+
+</mapper>
